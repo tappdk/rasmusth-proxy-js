@@ -4,7 +4,7 @@ var httpProxy = require('http-proxy');
 var proxy_static_files = new httpProxy.createProxyServer({
     target: {
         host: 'localhost',
-        port: 9090
+        port: 20900
     }
 });
 
