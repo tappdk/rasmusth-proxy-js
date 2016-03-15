@@ -1,5 +1,6 @@
 var http = require('https');
 var httpProxy = require('http-proxy');
+var fs = require('fs');
 
 var proxy_static_files = new httpProxy.createProxyServer({
     ssl: {
