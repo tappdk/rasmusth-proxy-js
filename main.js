@@ -1,7 +1,7 @@
-var http = require('https');
+var http = require('http');
+var https = require('https');
 var httpProxy = require('http-proxy');
 var fs = require('fs');
-var crypto = require('crypto')
 
 var privateKey = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_key.pem', 'utf8');
 var certificate = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8');
@@ -28,7 +28,17 @@ var handler = function (req, res) {
     }
 };
 
-
-var server = http.createServer(ssl);
-server.addListener("request", handler);
+var server = https.createServer(ssl);
+server.addListener('request', handler);
 server.listen(443);
+
+var redirectionHandler = function (req, res) {
+    res.writeHead(302, {
+        'Location': 'https://' + req.headers.host
+    });
+    res.end();
+};
+
+var redirectionServer = http.createServer();
+redirectionServer.addListener('request', redirectionHandler);
+redirectionServer.listen(80)
