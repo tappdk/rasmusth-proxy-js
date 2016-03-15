@@ -10,7 +10,7 @@ var proxy_static_files = new httpProxy.createProxyServer({
 
 http.createServer(function(req, res) {
     console.log('Host: ' + req.headers.host);
-    if (req.headers.host === 'http://static-files.rasmusth.dk') {
+    if (req.headers.host === 'static-files.rasmusth.dk') {
         proxy_static_files.proxyRequest(req, res);
         proxy_static_files.on('error', function(err, req, res) {
             if (err) console.log(err);
