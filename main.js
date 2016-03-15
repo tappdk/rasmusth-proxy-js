@@ -20,10 +20,6 @@ var proxyTransmission = new httpProxy.createProxyServer({
     target: 'http://192.168.1.123:9091'
 });
 
-var proxyPlex = new httpProxy.createProxyServer({
-    target: 'http://localhost:32400'
-});
-
 var handler = function (req, res) {
     console.log('Host: ' + req.headers.host);
     var errorHandler = function(err, req, res) {
@@ -37,9 +33,6 @@ var handler = function (req, res) {
     } else if (req.headers.host === 'transmission.rasmusth.dk') {
         proxyTransmission.proxyRequest(req, res);
         proxyTransmission.on('error', errorHandler);
-    } else if (req.headers.host === 'plex.rasmusth.dk') {
-        proxyPlex.proxyRequest(req, res);
-        proxyPlex.on('error', errorHandler());
     }
 };
 
