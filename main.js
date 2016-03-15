@@ -7,10 +7,6 @@ var privateKey = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmu
 var certificate = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8');
 
 var proxy_static_files = new httpProxy.createProxyServer({
-    ssl: {
-        key: privateKey,
-        cert: certificate
-    },
     target: {
         host: 'localhost',
         port: 20900
