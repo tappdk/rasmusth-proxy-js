@@ -1,11 +1,15 @@
 var http = require('https');
 var httpProxy = require('http-proxy');
 var fs = require('fs');
+var crypto = require('crypto')
+
+var privateKey = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_key.pem', 'utf8');
+var certificate = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8');
 
 var proxy_static_files = new httpProxy.createProxyServer({
     ssl: {
-        key: fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_key.pem', 'utf8'),
-        cert: fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8')
+        key: privateKey,
+        cert: certificate
     },
     target: {
         host: 'localhost',
@@ -14,7 +18,7 @@ var proxy_static_files = new httpProxy.createProxyServer({
     secure: true
 });
 
-https.createServer(function(req, res) {
+var handler = function (req, res) {
     console.log('Host: ' + req.headers.host);
     if (req.headers.host === 'static-files.rasmusth.dk') {
         proxy_static_files.proxyRequest(req, res);
@@ -24,4 +28,12 @@ https.createServer(function(req, res) {
             res.end('Oops, something went very wrong on static-files...');
         });
     }
-}).listen(443);
+};
+
+var serverOptions = {
+    key: privateKey,
+    cert: certificate
+};
+var server = http.createServer(serverOptions);
+server.addListener("request", handler);
+server.listen(443);
