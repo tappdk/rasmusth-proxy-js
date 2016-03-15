@@ -1,34 +1,20 @@
 var http = require('http');
 var httpProxy = require('http-proxy');
 
-var proxy_web = new httpProxy.createProxyServer({
+var proxy_static_files = new httpProxy.createProxyServer({
     target: {
         host: 'localhost',
-        port: 8080
-    }
-});
-
-var proxy_api = new httpProxy.createProxyServer({
-    target: {
-        host: 'localhost',
-        port: 8081
+        port: 9090
     }
 });
 
 http.createServer(function(req, res) {
-    if (req.headers.host === 'http://macminijs.rasmusth.dk') {
-        proxy_web.proxyRequest(req, res);
-        proxy_web.on('error', function(err, req, res) {
+    if (req.headers.host === 'http://static-files.rasmusth.dk') {
+        proxy_static_files.proxyRequest(req, res);
+        proxy_static_files.on('error', function(err, req, res) {
             if (err) console.log(err);
             res.writeHead(500);
-            res.end('Oops, something went very wrong on macminijs...');
-        });
-    } else if (req.headers.host === 'http://test.domain.com') {
-        proxy_api.proxyRequest(req, res);
-        proxy_api.on('error', function(err, req, res) {
-            if (err) console.log(err);
-            res.writeHead(500);
-            res.end('Oops, something went very wrong on test...');
+            res.end('Oops, something went very wrong on static-files...');
         });
     }
-}).listen(8989);
+}).listen(80);
