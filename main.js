@@ -5,13 +5,15 @@ var crypto = require('crypto')
 
 var privateKey = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_key.pem', 'utf8');
 var certificate = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8');
+var ssl = {
+    key: privateKey,
+    cert: certificate
+};
 
 var proxy_static_files = new httpProxy.createProxyServer({
-    target: {
-        host: 'localhost',
-        port: 20900
-    },
-    secure: true
+    ssl: ssl,
+    secure: true,
+    target: 'https://local.rasmusth.dk:20900'
 });
 
 var handler = function (req, res) {
@@ -26,10 +28,7 @@ var handler = function (req, res) {
     }
 };
 
-var serverOptions = {
-    key: privateKey,
-    cert: certificate
-};
-var server = http.createServer(serverOptions);
+
+var server = http.createServer(ssl);
 server.addListener("request", handler);
 server.listen(443);
