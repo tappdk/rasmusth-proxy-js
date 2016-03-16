@@ -2,6 +2,17 @@ var http = require('http');
 var https = require('https');
 var httpProxy = require('http-proxy');
 var fs = require('fs');
+var argv = require('minimist')(process.argv.slice(2));
+
+var httpPort = argv['p'];
+if (!valueIsValidPort(httpPort)) {
+    httpPort = 80;
+}
+
+var httpsPort = argv['s'];
+if (!valueIsValidPort(httpsPort)) {
+    httpsPort = 443;
+}
 
 var privateKey = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_key.pem', 'utf8');
 var certificate = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8');
@@ -28,7 +39,7 @@ var proxyWWW = new httpProxy.createProxyServer({
     target: 'http://localhost:20901'
 });
 
-var handler = function (req, res) {
+var handler = function(req, res) {
     console.log('Host: ' + req.headers.host);
     var errorHandler = function(err, req, res) {
         if (err) console.log(err);
@@ -49,7 +60,7 @@ var handler = function (req, res) {
         proxyWWW.on('error', errorHandler);
     } else {
         res.writeHead(302, {
-            'Location': 'https://www.rasmusth.dk'
+            'Location': 'https://www.rasmusth.dk:' + httpsPort
         });
         res.end();
     }
@@ -57,15 +68,39 @@ var handler = function (req, res) {
 
 var server = https.createServer(ssl);
 server.addListener('request', handler);
-server.listen(443);
+server.listen(httpsPort);
 
-var redirectionHandler = function (req, res) {
+var redirectionHandler = function(req, res) {
+    host = domainByRemovingPortFromHost(req.headers.host) + ":" + httpsPort;
     res.writeHead(302, {
-        'Location': 'https://' + req.headers.host
+        'Location': 'https://' + host + req.url
     });
     res.end();
 };
 
 var redirectionServer = http.createServer();
 redirectionServer.addListener('request', redirectionHandler);
-redirectionServer.listen(80)
+redirectionServer.listen(httpPort);
+
+function domainByRemovingPortFromHost(host) {
+    var indexOfPortColon = host.lastIndexOf(':');
+    if (indexOfPortColon === -1) {
+        return host;
+    }
+    return host.substring(0, indexOfPortColon);
+}
+
+function portByRemovingDomainFromHost(host) {
+    var indexOfPortColon = host.lastIndexOf(':');
+    if (indexOfPortColon === -1) {
+        return null;
+    }
+    return host.substring(indexOfPortColon + 1);
+}
+
+function valueIsValidPort(value) {
+    var isNumber = typeof httpPort === 'number';
+    var isInteger = httpPort % 1 === 0;
+    var isUnsigned = httpPort > 1;
+    return isNumber && isInteger && isUnsigned;
+}
