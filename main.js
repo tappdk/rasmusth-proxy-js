@@ -24,7 +24,7 @@ var proxyPlexPy = new httpProxy.createProxyServer({
     target: 'http://localhost:8181'
 });
 
-var proxyFront = new httpProxy.createProxyServer({
+var proxyWWW = new httpProxy.createProxyServer({
     target: 'http://localhost:20901'
 });
 
@@ -44,12 +44,12 @@ var handler = function (req, res) {
     } else if (req.headers.host === 'plexpy.rasmusth.dk') {
         proxyPlexPy.proxyRequest(req, res);
         proxyPlexPy.on('error', errorHandler);
-    } else if (req.headers.host === 'front.rasmusth.dk') {
-        proxyFront.proxyRequest(req, res);
-        proxyFront.on('error', errorHandler);
+    } else if (req.headers.host === 'www.rasmusth.dk') {
+        proxyWWW.proxyRequest(req, res);
+        proxyWWW.on('error', errorHandler);
     } else {
         res.writeHead(302, {
-            'Location': 'https://front.rasmusth.dk'
+            'Location': 'https://www.rasmusth.dk'
         });
         res.end();
     }
