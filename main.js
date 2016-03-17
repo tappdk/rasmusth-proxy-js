@@ -59,8 +59,12 @@ var handler = function(req, res) {
         proxyWWW.proxyRequest(req, res);
         proxyWWW.on('error', errorHandler);
     } else {
+        var location = 'https://www.rasmusth.dk';
+        if (httpsPort !== 443) {
+            location += ':' + httpsPort;
+        }
         res.writeHead(302, {
-            'Location': 'https://www.rasmusth.dk:' + httpsPort
+            'Location': location
         });
         res.end();
     }
@@ -71,7 +75,10 @@ server.addListener('request', handler);
 server.listen(httpsPort);
 
 var redirectionHandler = function(req, res) {
-    host = domainByRemovingPortFromHost(req.headers.host) + ":" + httpsPort;
+    host = domainByRemovingPortFromHost(req.headers.host);
+    if (httpsPort !== 443) {
+        host += ":" + httpsPort;
+    }
     res.writeHead(302, {
         'Location': 'https://' + host + req.url
     });
