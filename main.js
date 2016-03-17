@@ -106,8 +106,8 @@ function portByRemovingDomainFromHost(host) {
 }
 
 function valueIsValidPort(value) {
-    var isNumber = typeof httpPort === 'number';
-    var isInteger = httpPort % 1 === 0;
-    var isUnsigned = httpPort > 1;
+    var isNumber = typeof value === 'number';
+    var isInteger = value % 1 === 0;
+    var isUnsigned = value > 1;
     return isNumber && isInteger && isUnsigned;
 }
