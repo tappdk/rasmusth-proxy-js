@@ -46,16 +46,16 @@ var handler = function(req, res) {
         res.writeHead(500);
         res.end('Oops, something went very wrong...');
     };
-    if (req.headers.host === 'static-files.rasmusth.dk') {
+    if (req.headers.host === 'static-files.rhummelmose.dk') {
         proxyStaticFiles.proxyRequest(req, res);
         proxyStaticFiles.on('error', errorHandler);
-    } else if (req.headers.host === 'transmission.rasmusth.dk') {
+    } else if (req.headers.host === 'transmission.rhummelmose.dk') {
         proxyTransmission.proxyRequest(req, res);
         proxyTransmission.on('error', errorHandler);
-    } else if (req.headers.host === 'plexpy.rasmusth.dk') {
+    } else if (req.headers.host === 'plexpy.rhummelmose.dk') {
         proxyPlexPy.proxyRequest(req, res);
         proxyPlexPy.on('error', errorHandler);
-    } else if (req.headers.host === 'www.rasmusth.dk') {
+    } else if (req.headers.host === 'www.rhummelmose.dk') {
         proxyWWW.proxyRequest(req, res);
         proxyWWW.on('error', errorHandler);
     } else {
