@@ -14,8 +14,8 @@ if (!valueIsValidPort(httpsPort)) {
     httpsPort = 443;
 }
 
-var privateKey = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_key.pem', 'utf8');
-var certificate = fs.readFileSync('/Users/rasmusth/Documents/Certificates/*.rasmusth.dk_cert.pem', 'utf8');
+var privateKey = fs.readFileSync('/etc/letsencrypt/live/rhummelmose.dk/privkey.pem', 'utf8');
+var certificate = fs.readFileSync('/etc/letsencrypt/live/rhummelmose.dk/fullchain.pem', 'utf8');
 var ssl = {
     key: privateKey,
     cert: certificate
@@ -24,7 +24,7 @@ var ssl = {
 var proxyStaticFiles = new httpProxy.createProxyServer({
     ssl: ssl,
     secure: true,
-    target: 'https://local.rasmusth.dk:20900'
+    target: 'https://local.rhummelmose.dk:20900'
 });
 
 var proxyTransmission = new httpProxy.createProxyServer({
@@ -59,7 +59,7 @@ var handler = function(req, res) {
         proxyWWW.proxyRequest(req, res);
         proxyWWW.on('error', errorHandler);
     } else {
-        var location = 'https://www.rasmusth.dk';
+        var location = 'https://www.rhummelmose.dk';
         if (httpsPort !== 443) {
             location += ':' + httpsPort;
         }
