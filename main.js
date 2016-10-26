@@ -22,9 +22,7 @@ var ssl = {
 };
 
 var proxyStaticFiles = new httpProxy.createProxyServer({
-    ssl: ssl,
-    secure: true,
-    target: 'https://local.rhummelmose.dk:20900'
+    target: 'http://localhost:20900'
 });
 
 var proxyTransmission = new httpProxy.createProxyServer({
